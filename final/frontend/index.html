@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Distribution Load Shedding System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>⚡ Power Distribution Management System</h1>
+            <p class="subtitle">Load Shedding & Priority Management</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navbar">
+            <button class="nav-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+            <button class="nav-btn" onclick="switchTab('feeders')">Feeders</button>
+            <button class="nav-btn" onclick="switchTab('areas')">Areas</button>
+            <button class="nav-btn" onclick="switchTab('network')">Network Graph</button>
+            <button class="nav-btn" onclick="switchTab('schedule')">Schedule</button>
+            <button class="nav-btn" onclick="switchTab('maintenance')">Maintenance</button>
+        </nav>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="card-grid">
+                <!-- System Status Card -->
+                <div class="card status-card">
+                    <h3>System Status</h3>
+                    <div class="status-info">
+                        <div class="status-item">
+                            <span class="label">Total Demand:</span>
+                            <span class="value" id="totalDemand">0 kW</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">Available Power:</span>
+                            <span class="value" id="availablePower">0 kW</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">Current Hour:</span>
+                            <span class="value" id="currentHour">00:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Substation Info Card -->
+                <div class="card info-card">
+                    <h3>Substations</h3>
+                    <div id="substationList" class="list-content">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+
+                <!-- Priority Distribution -->
+                <div class="card priority-card">
+                    <h3>Areas by Priority</h3>
+                    <div id="priorityChart" class="priority-list">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Areas Tab -->
+        <div id="areas" class="tab-content">
+            <div class="card">
+                <h3>Area Management</h3>
+                <div class="alert-info">
+                    <strong>Note:</strong> First create a Feeder, then add Areas to that Feeder.
+                </div>
+                
+                <div class="form-group">
+                    <label for="areaFeeder"><strong>Select Feeder:</strong></label>
+                    <select id="areaFeeder" class="input-field" required>
+                        <option value="">-- Select a Feeder --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="areaName"><strong>Area Name:</strong></label>
+                    <input type="text" id="areaName" class="input-field">
+                    <label for="areaLoad"><strong>Average energy used in 1 hour (kW/kWh):</strong></label>
+                    <input type="number" id="areaLoad" class="input-field" min="0" step="0.1">
+                    <label for="areaPopulation"><strong>Population:</strong></label>
+                    <input type="number" id="areaPopulation" class="input-field" min="0">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <label for="areaHospitals"><strong>Hospitals:</strong></label>
+                            <input type="number" id="areaHospitals" class="input-field" min="0">
+                        </div>
+                        <div class="form-col">
+                            <label for="areaEmergency"><strong>Emergency Services:</strong></label>
+                            <input type="number" id="areaEmergency" class="input-field" min="0">
+                        </div>
+                        <div class="form-col">
+                            <label for="areaResearch"><strong>Research Centers:</strong></label>
+                            <input type="number" id="areaResearch" class="input-field" min="0">
+                        </div>
+                        <div class="form-col">
+                            <label for="areaSchools"><strong>Schools:</strong></label>
+                            <input type="number" id="areaSchools" class="input-field" min="0">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="addArea()">Add Area</button>
+                </div>
+
+                <h4>Existing Areas</h4>
+                <div id="areasList" class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Area ID</th>
+                                <th>Name</th>
+                                <th>Feeder</th>
+                                <th>Load (kW)</th>
+                                <th>Priority</th>
+                                <th>Population</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="areasTableBody">
+                            <tr><td colspan="7">No areas added</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feeders Tab -->
+        <div id="feeders" class="tab-content">
+            <div class="card">
+                <h3>Feeder Management</h3>
+                <div class="form-group">
+                    <label for="feederName"><strong>Feeder Name:</strong></label>
+                    <input type="text" id="feederName" class="input-field" required>
+                    <button class="btn btn-primary" onclick="addFeeder()">Add Feeder</button>
+                </div>
+
+                <h4>Existing Feeders</h4>
+                <div id="feedersList" class="feeder-grid">
+                    <p>No feeders added yet. Create one to get started!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Network Graph Tab -->
+        <div id="network" class="tab-content">
+            <div class="card">
+                <h3>Network Visualization</h3>
+                <div class="network-controls">
+                    <button class="btn btn-primary" onclick="generateNetworkGraph()">Refresh Graph</button>
+                </div>
+                <canvas id="networkCanvas" style="width: 100%; height: 600px; border: 1px solid #ddd; border-radius: 6px;"></canvas>
+            </div>
+        </div>
+
+        <!-- Schedule Tab -->
+        <div id="schedule" class="tab-content">
+            <div class="card">
+                <h3>Day-Energy Based 24-hour Scheduling (06:00 to next-day 06:00)</h3>
+                
+                <div id="scheduleInfo" class="schedule-info">
+                    <p><strong>If all areas are ON (per hour):</strong></p>
+                    <p id="hourlyDemandInfo">Hourly demand = -- kW</p>
+                    <p id="dailyEnergyInfo">Daily energy needed = -- kWh</p>
+                </div>
+
+                <div class="schedule-controls">
+                    <label for="availablePowerInput"><strong>Available Energy for the Day (kWh):</strong></label>
+                    <input type="number" id="availablePowerInput" class="input-field">
+                    <button onclick="generateSchedule()" class="btn btn-primary">Generate Optimal Schedule</button>
+                </div>
+
+                <div id="scheduleGrid" class="schedule-grid">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Maintenance Tab -->
+        <div id="maintenance" class="tab-content">
+            <div class="card">
+                <h3>Maintenance Queue (Priority-Based)</h3>
+                <div class="form-group">
+                    <label for="maintenanceArea"><strong>Select Area:</strong></label>
+                    <select id="maintenanceArea" class="input-field" required>
+                        <option value="">-- Select an Area --</option>
+                    </select>
+                    <label for="maintenanceIssue"><strong>Issue Description:</strong></label>
+                    <textarea id="maintenanceIssue" class="input-field" rows="3"></textarea>
+                    <button onclick="addMaintenance()" class="btn btn-primary">Add Task</button>
+                </div>
+
+                <h4>Maintenance Queue (Sorted by Area Priority)</h4>
+                <div id="maintenanceQueue" class="maintenance-list">
+                    <p>No maintenance tasks</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
